@@ -1,6 +1,8 @@
 # berlin2018
 ## GWAS course in Berlin
 
+git repository: git clone https://github.com/filippob/berlin2018.git
+
 ### Example data
 From Biscarini et al. 2016
 - paper: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0155425
