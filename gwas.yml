@@ -1,0 +1,12 @@
+pipeline: imputation and GWAS pipeline for SNP genotyping data
+
+resources:
+   conda_path: /home/filippo/anaconda2/bin/
+   zanardi: /home/filippo/Dropbox/cursos/berlin2018/Zanardi/Zanardi.py
+
+steps:
+
+  imputation:
+    desc: run the imputation of missing genotypes through Zanardi
+    run:
+      - python <zanardi> --beagle4 --plinkqc
