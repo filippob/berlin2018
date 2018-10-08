@@ -1,0 +1,6 @@
+resources:
+  output: /home/filippo/Dropbox/cursos/berlin2018/
+  ped_file: sheep.ped
+
+samples:
+  Analysis: /home/filippo/Dropbox/cursos/berlin2018/data

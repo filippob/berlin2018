@@ -9,4 +9,14 @@ steps:
   imputation:
     desc: run the imputation of missing genotypes through Zanardi
     run:
+      - vim PARAMFILE.txt [edit software paths, data paths, QC_OTHOPT= --bp-space 1]
+      - run with and without QC (to show effect of duplicate SNPs)
       - python <zanardi> --beagle4 --plinkqc
+
+
+
+  prep_phenotypes:
+    desc: prepare phenotype file for GWAS
+    run:
+      - cut -f1,2,5,6 -d' ' <ped_file>  > phenotypes.dat
+      - 
