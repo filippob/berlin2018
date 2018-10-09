@@ -52,6 +52,9 @@ print(pheno_df.head())
 pheno_df.loc[pheno_df['breed'] != 'Jacobs', 'phenotype'] = 0
 pheno_df.loc[pheno_df['breed'] == 'Jacobs', 'phenotype'] = 1
 
+pheno_df.loc[pheno_df['sex'] == 1, 'sex'] = 0
+pheno_df.loc[pheno_df['sex'] == 2, 'sex'] = 1
+
 logging.info("A glimpse on data from the two breeds:")
 print(pheno_df.loc[pheno_df['breed'] != 'Jacobs',].head())
 print(pheno_df.loc[pheno_df['breed'] == 'Jacobs',].head())

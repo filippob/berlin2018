@@ -3,6 +3,7 @@ pipeline: imputation and GWAS pipeline for SNP genotyping data
 resources:
    conda_path: /home/filippo/anaconda2/bin/
    zanardi: /home/filippo/Dropbox/cursos/berlin2018/Zanardi/Zanardi.py
+   plink: ~/Downloads/plink
 
 steps:
 
@@ -14,9 +15,19 @@ steps:
       - python <zanardi> --beagle4 --plinkqc
 
 
-
   prep_phenotypes:
     desc: prepare phenotype file for GWAS
     run:
-      - cut -f1,2,5,6 -d' ' <ped_file>  > phenotypes.dat
-      - 
+      - cut -f1,2,5,6 -d' ' <ped_file>  > phenotypes.dat ##'
+      - python prep_pheno.py -i phenotypes.dat -o pheno_genabel.dat
+
+  prep_genotypes:
+    desc: transpose ped/map files
+    run: 
+      - <plink> --sheep --file sheep --transpose --recode --out transposed_sheep
+
+  file_conversion:
+    desc: convert genotype and phenotype files for GenABEL
+    run:
+      - Rscript --vanilla convert_GenABEL.R tped_file tfam_file
+
