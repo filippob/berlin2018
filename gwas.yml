@@ -7,6 +7,13 @@ resources:
 
 steps:
 
+  explore_genotypes:
+    desc: basic stats on genotypes data
+    run:
+      - <plink> --sheep --file sheep --freq --out ovis
+      - <plink> --sheep --file sheep --missing --out ovis
+      - <plink> --sheep --file sheep --hardy --out ovis
+
   imputation:
     desc: run the imputation of missing genotypes through Zanardi
     run:

@@ -1,0 +1,86 @@
+---
+title: "GWAS - outline"
+author: "Filippo Biscarini"
+date: "October 10, 2018"
+output: html_document
+bibliography: gwas.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library("knitr")
+library("dplyr")
+library("knitr")
+library("GenABEL")
+library("ggplot2")
+library("reshape2")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this @meuwissen2001prediction:
+
+```{r cars}
+setwd("~/Dropbox/cursos/berlin2018")
+load("data/df_genabel.RData")
+
+descriptives.marker(df)
+```
+
+```{r, echo=FALSE}
+kable(descriptives.trait(df))
+```
+
+N. `r gtdata(df)@nsnps` from `r length(unique(gtdata(df)@chromosome))` chromosomes
+
+```{r, echo=FALSE}
+dd <- as.data.frame(table(gtdata(df)@chromosome))
+names(dd) <- c("chrom","nSnps")
+kable(dd)
+```
+
+## Including Plots
+
+For the moment, our "phenotype" coincides with the breed:
+
+```{r pressure, echo=FALSE}
+pp <- phdata(df)
+pp$phenotype <- as.factor(pp$phenotype)
+p <- ggplot(pp,aes(x=phenotype)) + geom_bar(aes(fill=phenotype))
+p <- p + facet_wrap(~breed) + xlab("phenotype")
+print(p)
+```
+
+### Quality check
+
+```{r, label='quality_check', echo=FALSE}
+qc1 <- check.marker(df, p.level=0)
+df1 <- df[,qc1$snpok]
+```
+
+### Kinship matrix
+
+```{r, label='kinship', echo=FALSE}
+K <- ibs(df1,weight = "freq")
+K[upper.tri(K)] = t(K)[upper.tri(K)]
+heatmap(K,col=rev(heat.colors(75)))
+```
+
+```{r, label='polygenic'}
+h2a <- polygenic(phenotype,data=df1,kin=K,trait.type = "binomial")
+df.mm <- mmscore(h2a,df1)
+descriptives.scan(df.mm,top=100)
+plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
+```
+
+```{r, label='eigenn_decomposition', echo=FALSE}
+df.mm  <- egscore(phdata(df1)$phenotype,data=df1,kin=K)
+plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="trait")
+descriptives.scan(df.mm,top=100)
+```
+
+
+## References
