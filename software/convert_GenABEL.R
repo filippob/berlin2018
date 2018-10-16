@@ -10,7 +10,7 @@ print(paste("tped file is",tPed))
 print(paste("tfam file is",tFam))
 print(paste("phenotypes file is",phenotype_data))
 
-setwd("../data")
+setwd("~/Dropbox/cursos/berlin2018/data")
 
 convert.snp.tped(tped=tPed,
                  tfam=tFam,

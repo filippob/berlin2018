@@ -16,7 +16,8 @@ From Kijas et al.
 
 
 ### subset data
-plink --file GBSnew --chr 4-8 --thin 0.25 --recode --out rice_berlin2018
+#plink --file GBSnew --chr 4-8 --thin 0.25 --recode --out rice_berlin2018
+plink --file rice_berlin2018 --keep ~/Documents/arroz/GWAS/daRaffa/Campo/dati fenotipici/keep.txt --recode --out rice
 plink --sheep --file 4H_160indivs_Final --chr 1-3 --thin 0.1 --recode --out sheep
 
 

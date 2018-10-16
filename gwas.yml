@@ -25,16 +25,23 @@ steps:
   prep_phenotypes:
     desc: prepare phenotype file for GWAS
     run:
+      #for sheep data
       - cut -f1,2,5,6 -d' ' <ped_file>  > phenotypes.dat ##'
       - python prep_pheno.py -i phenotypes.dat -o pheno_genabel.dat
+      #for rice data
+      - cut -d' ' -f1 rice.ped > pops #'
+      - paste -d' ' pops phenotypes_rice.txt > temp #'
+      - awk 'NR==1 {v=1}{print $2,$1,$3,v}' temp > phenotypes_rice.txt
 
   prep_genotypes:
     desc: transpose ped/map files
     run: 
       - <plink> --sheep --file sheep --transpose --recode --out transposed_sheep
+      - <plink> --sheep --file ~/Dropbox/cursos/berlin2018/Zanardi/OUTPUT/BEAGLE_OUT_IMPUTEDSHEEP_IMPUTED --transpose --recode --out transposed_sheep
+      - <plink> --file ~/Dropbox/cursos/berlin2018/Zanardi/OUTPUT/BEAGLE_OUT_IMPUTEDRICE_IMPUTED --transpose --recode --out transposed_rice
 
   file_conversion:
     desc: convert genotype and phenotype files for GenABEL
     run:
-      - Rscript --vanilla convert_GenABEL.R tped_file tfam_file
+      - Rscript --vanilla convert_GenABEL.R tped_file tfam_file phenotype_data
 
