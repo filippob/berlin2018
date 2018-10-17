@@ -10,24 +10,28 @@ import logging
 
 ## function to parse the command line
 def main(argv):
-   inputfile = ''
+   inputfile1 = ''
+   inputfile2 = ''
    outputfile = ''
    try:
-      opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+      opts, args = getopt.getopt(argv,"hi:j:o:",["ifile1=","ifile2","ofile="])
    except getopt.GetoptError:
-      print('prep_pheno.py -i <inputfile> -o <outputfile>')
+      print('prep_pheno.py -i <inputfile1> -j <inputfile2> -o <outputfile>')
       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
-         print('prep_pheno.py -i <inputfile> -o <outputfile>')
+         print('prep_pheno.py -i <inputfile1> -j <inputfile2> -o <outputfile>')
          sys.exit()
-      elif opt in ("-i", "--ifile"):
-         inputfile = arg
+      elif opt in ("-i", "--ifile1"):
+         inputfile1 = arg
+      elif opt in ("-j", "--ifile2"):
+         inputfile2 = arg
       elif opt in ("-o", "--ofile"):
          outputfile = arg
-   print('Input file is ', inputfile)
+   print('Input file 1 is ', inputfile1)
+   print('Input file 2 is ', inputfile2)
    print('Output file is ', outputfile)
-   return(inputfile,outputfile)
+   return(inputfile1,inputfile2,outputfile)
 
 
 ################
@@ -38,34 +42,42 @@ logging.info("Beginning to read and manipulate file ...")
 
 ### parsing the command line ###
 if __name__ == "__main__":
-   inf,outf= main(sys.argv[1:])
+   inf1,inf2,outf= main(sys.argv[1:])
 
 
-### reading and manipulating the phenotype file ###
-pheno_df= pd.read_csv(inf, sep=" ", names = ['breed', 'id', 'sex', 'phenotype'])
-logging.debug("N. of rows read from phenotype file: '%s'",len(pheno_df))
+### reading and manipulating the phenotype files ###
+pheno_df= pd.read_csv(inf1, sep=" ", names = ['breed', 'id', 'sex', 'phenotype'])
+logging.debug("N. of rows read from phenotype file 1: '%s'",len(pheno_df))
+pheno_df= pheno_df.drop('phenotype', axis=1)
 #print(len(pheno_df))
+pheno_df2= pd.read_csv(inf2, sep=" ", skiprows=1, names = ['num','breed','id','phenotype'])
+logging.debug("N. of rows read from phenotype file 2: '%s'",len(pheno_df2))
+pheno_df2= pheno_df2.drop(['num','breed'], axis=1)
 
-logging.info("First few lines of input file:")
+logging.info("First few lines of input file 1:")
 print(pheno_df.head())
+logging.info("First few lines of input file 2:")
+print(pheno_df2.head())
 
-pheno_df.loc[pheno_df['breed'] != 'Jacobs', 'phenotype'] = 0
-pheno_df.loc[pheno_df['breed'] == 'Jacobs', 'phenotype'] = 1
+res= pd.merge(pheno_df, pheno_df2, on='id')
 
-pheno_df.loc[pheno_df['sex'] == 1, 'sex'] = 0
-pheno_df.loc[pheno_df['sex'] == 2, 'sex'] = 1
+#pheno_df.loc[pheno_df['breed'] != 'Jacobs', 'phenotype'] = 0
+#pheno_df.loc[pheno_df['breed'] == 'Jacobs', 'phenotype'] = 1
+
+res.loc[pheno_df['sex'] == 1, 'sex'] = 0
+res.loc[pheno_df['sex'] == 2, 'sex'] = 1
 
 logging.info("A glimpse on data from the two breeds:")
-print(pheno_df.loc[pheno_df['breed'] != 'Jacobs',].head())
-print(pheno_df.loc[pheno_df['breed'] == 'Jacobs',].head())
+print(res.loc[pheno_df['breed'] != 'Jacobs',].head())
+print(res.loc[pheno_df['breed'] == 'Jacobs',].head())
 
 cols= ['id','breed','phenotype','sex']
-pheno_df= pheno_df[cols]
+res= res[cols]
 
 logging.debug("Name of output file: '%s'",outf)
 logging.info("First few lines of the phenotype file to be written out")
-print(pheno_df.tail())
+print(res.tail())
 
 logging.info("writing out phenotype file ...")
-pheno_df.to_csv(outf,sep=" ")
+res.to_csv(outf,sep=" ")
 logging.info("DONE!")

@@ -1,0 +1,57 @@
+---
+title: "phenotypes"
+author: "Filippo Biscarini"
+date: "October 16, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library("ggplot2")
+library("tidyr")
+library("dplyr")
+library("knitr")
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Phenotypic data
+
+Exploring phenotypes is equally important as it is exploring genotype data, when approaching a GWAS experiment.
+Things to look for are different depending on the type of phenotype e.g. if the trait considered is **continuous** or **binary**.
+
+### Continuous trait
+
+```{r cars}
+setwd("~/Dropbox/cursos/berlin2018/data/")
+pheno_continuous <- read.table("phenotypes_rice.txt", header = TRUE)
+
+pheno_continuous %>%
+  group_by(population) %>%
+  summarise(N=n(), avgPH=mean(phenotype), stdPH=sd(phenotype), minPH=min(phenotype),
+            maxPH=max(phenotype))
+
+```
+
+### Binary trait
+
+```{r binary}
+setwd("~/Dropbox/cursos/berlin2018/data/")
+pheno_binary <- read.table("pheno_genabel.dat", header = TRUE)
+
+pheno_binary %>%
+  group_by(breed, phenotype) %>%
+  summarise(N=n()) %>%
+  spread(key = phenotype, value = N)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+pheno_binary$phenotype <- as.factor(pheno_binary$phenotype)
+p <- ggplot(pheno_binary, aes(x=phenotype)) + geom_bar(aes(fill=phenotype))
+p
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

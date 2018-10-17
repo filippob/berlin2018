@@ -27,7 +27,7 @@ steps:
     run:
       #for sheep data
       - cut -f1,2,5,6 -d' ' <ped_file>  > phenotypes.dat ##'
-      - python prep_pheno.py -i phenotypes.dat -o pheno_genabel.dat
+      - python prep_pheno.py -i phenotypes.dat -j horn_pheno.csv -o pheno_genabel.dat
       #for rice data
       - cut -d' ' -f1 rice.ped > pops #'
       - paste -d' ' pops phenotypes_rice.txt > temp #'
@@ -38,7 +38,7 @@ steps:
     run: 
       - <plink> --sheep --file sheep --transpose --recode --out transposed_sheep
       - <plink> --sheep --file ~/Dropbox/cursos/berlin2018/Zanardi/OUTPUT/BEAGLE_OUT_IMPUTEDSHEEP_IMPUTED --transpose --recode --out transposed_sheep
-      - <plink> --file ~/Dropbox/cursos/berlin2018/Zanardi/OUTPUT/BEAGLE_OUT_IMPUTEDRICE_IMPUTED --transpose --recode --out transposed_rice
+      - <plink> --file ~/Dropbox/cursos/berlin2018/Zanardi/OUTPUT/BEAGLE_OUT_impRice_IMPUTED --transpose --recode --out transposed_rice
 
   file_conversion:
     desc: convert genotype and phenotype files for GenABEL
