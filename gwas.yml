@@ -14,6 +14,17 @@ steps:
       - <plink> --sheep --file sheep --missing --out ovis
       - <plink> --sheep --file sheep --hardy --out ovis
 
+  genotype_filtering:
+    desc: filter genotype data for missing rate, allele frequency and HW equilibrium (lack of)
+    run:
+      - <plink> --sheep --file sheep --geno 0.1 --recode --out filtered ## per site/SNP threshold
+      - <plink> --sheep --file sheep --mind 0.1 --recode --out filtered ## per sample threshold
+      ## filters on MAF may be applied after imputation
+      - <plink> --sheep --file sheep --maf 0.05 --recode --out filtered ## min freq threshold
+      - <plink> --sheep --file sheep --hwe 1e-10 --recode --out filtered ## p-value threshold to reject H0 (HW equilibrium)
+      - <plink> --sheep --file sheep --geno 0.1 --mind 0.1 --recode --out filtered ## options can be combined
+
+
   imputation:
     desc: run the imputation of missing genotypes through Zanardi
     run:
