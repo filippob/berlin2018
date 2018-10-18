@@ -171,12 +171,20 @@ na_count/(n_snps*n_samples)
 ### Step-by-step KNN implementation
 
 #calculate distance matrix and nearest neighbours
-D <- Hamming(M[,-c(1:6)])
+# D <- Hamming(M[,-c(1:6)])
+load("data/hamming.RData") ## load pre-calculated Hamming distances
 
+## rescale distances
 rescaled_D <- rescale_D(D)
 
-mdsD <- mdscale(D)
+## heatmap of distance matrix
+heatmap(D)
 
+## MDS
+mdsD <- mdscale(D)
 plot_mds(mdsD,M0,dimA = "dim1", dimB = "dim3")
 
+## IMPUTATION
 impM <- impute_genotypes(ped_file = as.data.frame(M), dist_matrix = D, k = 3)
+
+## try out different k values

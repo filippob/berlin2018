@@ -37,11 +37,16 @@ start.time <- Sys.time()
 #"READ IN THE DATA"
 M <- fread(ped_file, na.strings = "0")
 
+n_samples <- nrow(M)
+n_snps <- ncol(M)-6
+
+print(paste("N. of samples: ", n_samples, "; N. of SNP: ", n_snps))
+
 ## Hamming
 print("computing Hamming distances ...")
 D <- Hamming(M[,-c(1:6)])
 
-save(D, file = "hamming.RData")
+save(D, file = "../../data/hamming.RData")
 
 ## end time
 end.time <- Sys.time()

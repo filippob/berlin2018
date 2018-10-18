@@ -39,6 +39,13 @@ steps:
       - run with and without QC (to show effect of duplicate SNPs)
       - python <zanardi> --beagle4 --plinkqc
 
+  knn_imputation:
+    desc: run the imputation of missing genotypes with KNNI
+    run:
+      - <rscript> --vanilla hamming.R rice_reduced.ped ## compute Hamming distances and save to .RData object
+      - <rstudio> knni.R ## step-by-step KNNI
+      - <rstudio> knni.Rmd ## demonstration of KNNI (measuring accuracy)
+
 
   prep_phenotypes:
     desc: prepare phenotype file for GWAS
