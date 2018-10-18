@@ -37,11 +37,15 @@ kable(D)
 
 The distribution of a continuos trait is an important aspect: this may give indications as to the best way to model the trait in the GWAS analysis.
 
+We see now a series of density plots: i) overall density plot (all data together)
+
 ```{r}
 p <- ggplot(pheno_continuous, aes(x=phenotype)) + geom_density()
 p <- p + xlab("plant height")
 p
 ```
+
+We add now a vertical line for the average plant height
 
 ```{r}
 p <- ggplot(pheno_continuous, aes(x=phenotype)) + geom_density()
@@ -50,6 +54,7 @@ p <- p + xlab("plant height")
 p
 ```
 
+Now, we can plot different densities for ech population
 
 ```{r}
 p <- ggplot(pheno_continuous, aes(x=phenotype)) + geom_density(aes(fill=population), alpha=0.4)
@@ -58,6 +63,8 @@ p <- p + xlab("plant height")
 p
 ```
 
+And add histograms
+
 ```{r}
 p <- ggplot(pheno_continuous, aes(x=phenotype, color=population, fill=population))
 p <- p + geom_histogram(aes(y=..density..), alpha=0.5, position="identity")
@@ -65,7 +72,7 @@ p <- p + geom_density(alpha=.2)
 p
 ```
 
-Boxplots are an effective way to visualize distributions:
+Boxplots are another effective way to visualize distributions: median, IQR, max, min, outliers
 
 ```{r}
 p <- ggplot(pheno_continuous, aes(x=population,y=phenotype)) + geom_boxplot(aes(fill=population))
@@ -74,11 +81,11 @@ p
 ```
 
 
-
 ### Binary trait
 
 Binary (or categorical) traits call for different exploratory statistics.
-For instance, the distribution of cases and controls overall and per covariable (when available)
+For instance, the distribution of cases and controls overall and per covariable (when available).
+Here we see we have three classes: one is unknown status, which we will remove when filtering phenotypic data before GWAS.
 
 ```{r binary, echo=FALSE}
 setwd("~/Dropbox/cursos/berlin2018/data/")
@@ -100,4 +107,3 @@ p <- ggplot(pheno_binary, aes(x=phenotype)) + geom_bar(aes(fill=phenotype))
 p
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

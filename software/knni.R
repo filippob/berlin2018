@@ -149,14 +149,24 @@ impute_genotypes <- function(ped_file,dist_matrix,k=3) {
 
 ##################################################
 ##################################################
+library("dplyr")
 library("ggplot2")
 library("data.table")
 
 #"READ IN THE DATA"
-M <- fread("~/Dropbox/cursos/berlin2018/data/prova_rice.ped", na.strings = "0")
+M <- fread("~/Dropbox/cursos/berlin2018/data/rice_reduced.ped", na.strings = "0")
 M0 <- M[,.(V1,V2)]
 names(M0) <- c("GROUP","ID")
 
+na_count <- M %>%
+  select(-c(V1,V2,V3,V4,V5,V6)) %>%
+  summarise_all(funs(sum(is.na(.)))) %>%
+  summarise(somma=sum(.))
+
+n_samples <- nrow(M)
+n_snps <- ncol(M)-6
+
+na_count/(n_snps*n_samples)
 
 ### Step-by-step KNN implementation
 
@@ -169,4 +179,4 @@ mdsD <- mdscale(D)
 
 plot_mds(mdsD,M0,dimA = "dim1", dimB = "dim3")
 
-impute_genotypes(ped_file = as.data.frame(M), dist_matrix = D0, k = 3)
+impM <- impute_genotypes(ped_file = as.data.frame(M), dist_matrix = D, k = 3)

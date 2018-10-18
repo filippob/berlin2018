@@ -11,8 +11,16 @@ steps:
     desc: basic stats on genotypes data
     run:
       - <plink> --sheep --file sheep --freq --out ovis
+      - <plink> --sheep --file sheep --freq counts --out ovis
+      - <plink> --sheep --file sheep --freqx --out ovis
       - <plink> --sheep --file sheep --missing --out ovis
       - <plink> --sheep --file sheep --hardy --out ovis
+
+  explore_phenotypes:
+    desc: basic stats on phenotype data
+    run:
+      - <rscript> phenotypes.R
+      - <rstudio> phenotypes.Rmd #compile a html or pdf file (or slides whatever)
 
   genotype_filtering:
     desc: filter genotype data for missing rate, allele frequency and HW equilibrium (lack of)
@@ -23,7 +31,6 @@ steps:
       - <plink> --sheep --file sheep --maf 0.05 --recode --out filtered ## min freq threshold
       - <plink> --sheep --file sheep --hwe 1e-10 --recode --out filtered ## p-value threshold to reject H0 (HW equilibrium)
       - <plink> --sheep --file sheep --geno 0.1 --mind 0.1 --recode --out filtered ## options can be combined
-
 
   imputation:
     desc: run the imputation of missing genotypes through Zanardi

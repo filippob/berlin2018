@@ -1,4 +1,3 @@
-
 ---
 title: "Genotype imputation with KNN: a demonstration"
 author: "Filippo Biscarini"
@@ -51,13 +50,7 @@ In this brief practical/demonstration, we'll go through an illustration of how t
 ```{r,echo=FALSE,results='hide'}
 
 #Demonstrating the use of KNN to impute missing SNP genotypes
-# run as Rscript --vanilla svm.R dataset_name repetitions
-# library(reshape)
-# library(plyr)
-# library(glmnet)
-# library(class)
-# library(e1071)
-library(DMwR) #for kNN imputation
+library("DMwR") #for kNN imputation
 
 start.time <- Sys.time()
 ```
@@ -134,15 +127,17 @@ First, here's the Hamming distance function:
 
 ```{r}
 #calculate distance matrix and nearest neighbours
-Hamming <- function(x) {
+Hamming <- function(ssr_data) {
   
-  z <- matrix(0, nrow = nrow(x), ncol = nrow(x))
-  for (k in 1:(nrow(x) - 1)) {
-    for (l in (k + 1):nrow(x)) {
-      z[k, l] <- sum(x[k, ] != x[l, ], na.rm=TRUE)
+  z <- matrix(0, nrow = nrow(ssr_data), ncol = nrow(ssr_data))
+  
+  for (k in 1:(nrow(ssr_data) - 1)) {
+    for (l in (k + 1):nrow(ssr_data)) {
+      z[k, l] <- sum(ssr_data[k, ] != ssr_data[l, ], na.rm=TRUE)
       z[l, k] <- z[k, l]
     }
   }
+  
   return(z)
 }
 ```

@@ -23,4 +23,9 @@ plink --file rice_berlin2018 --keep ~/Documents/arroz/GWAS/daRaffa/Campo/dati fe
 plink --sheep --file 4H_160indivs_Final --chr 1-3 --thin 0.1 --recode --out sheep
 
 #reduced dataset for KNN imputation
+
 plink --file rice --chr 2 --thin 0.1 --recode --out rice_reduced
+
+#example vcf file
+
+vcftools --gzvcf all.fb.vcf.gz --chr 1 --from-bp 10 --to-bp 1500 --recode --out vcf_subset
