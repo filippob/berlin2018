@@ -77,6 +77,9 @@ p
 
 ### Binary trait
 
+Binary (or categorical) traits call for different exploratory statistics.
+For instance, the distribution of cases and controls overall and per covariable (when available)
+
 ```{r binary, echo=FALSE}
 setwd("~/Dropbox/cursos/berlin2018/data/")
 pheno_binary <- read.table("pheno_genabel.dat", header = TRUE)
@@ -89,9 +92,7 @@ D <- pheno_binary %>%
 kable(D)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
+Barplot of phenotype categories:
 
 ```{r pressure, echo=FALSE}
 pheno_binary$phenotype <- as.factor(pheno_binary$phenotype)
