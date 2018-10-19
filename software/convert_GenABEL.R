@@ -12,17 +12,22 @@ print(paste("phenotypes file is",phenotype_data))
 
 setwd("~/Dropbox/cursos/berlin2018/data")
 
+fname= basename(tPed)
+fname= sub("transposed\\_","",fname)
+fname1= paste(fname,"raw",sep=".")
+
 convert.snp.tped(tped=tPed,
                  tfam=tFam,
-                 out="genabel.raw",
+                 out=fname1,
                  strand="+")
 
 df <- load.gwaa.data(phe=phenotype_data, 
-                     gen="genabel.raw",
+                     gen=fname1,
                      force=TRUE
 )
 
-save(df,file="df_genabel.RData")
+fname2= paste(fname,"RData",sep=".")
+save(df,file=fname2)
 
 print("DONE!")
 

@@ -46,6 +46,11 @@ steps:
       - <rstudio> knni.R ## step-by-step KNNI
       - <rstudio> knni.Rmd ## demonstration of KNNI (measuring accuracy)
 
+  imputation_nozanardi:
+    desc: imputation using Beagle
+    run:
+      - <plink> --file sheep --maf 0.10 --recode vcf --out sheep #filter for MAF is important: otherwise, missing REF/ALT
+      - java -Xss5m -Xmx4g -jar <beagle_jar> gt=<vcf_file> out=imp #this works also with Beagle 4.1 and Beagle 5.0
 
   prep_phenotypes:
     desc: prepare phenotype file for GWAS

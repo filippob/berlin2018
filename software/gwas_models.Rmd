@@ -1,0 +1,131 @@
+---
+title: "GWAS_models"
+author: "Filippo Biscarini"
+date: "October 19, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("ggplot2")
+library("knitr")
+```
+
+## GWAS: quantitative traits
+
+For quantitative traits (continuous target variables), the basic model is a simple linear regression model of the following form:
+
+$$
+y_{ij}=\mu+SNP_j+e_{ij}
+$$
+
+where $y_{ij}$ is the phenotypic observation for sample *i* with SNP genotype *j*, $SNP_j$ is the effect of SNP genotype *j* (e.g. AA, AB, BB), and $e_{ij}$ are the residuals of the model.
+
+```{r data, echo=FALSE}
+setwd("~/Dropbox/cursos/berlin2018/data/")
+phenotypes <- read.table("phenotypes_rice.txt", header = TRUE)
+genotypes <- read.table("rice_snp.raw", header = TRUE)
+genotypes <- genotypes[,-c(1,3,4,5,6)]
+
+phenotypes <- merge(phenotypes, genotypes, by.x="id", by.y="IID")
+names(phenotypes) <- c("id","population","PH","sex","snp")
+
+kable(head(phenotypes))
+```
+
+### Modelling number of copies of the minor allele
+
+First, we can model SNP genotypes as the number of copies of the minor allele: 0, 1, 2 (numeric variable)
+
+```{r model1}
+fit <- lm(PH~snp, data = phenotypes)
+```
+
+```{r, echo=FALSE}
+g <- summary(fit)
+g
+```
+
+#### ANOVA table
+
+```{r, echo=FALSE}
+kable(anova(fit))
+```
+
+### Modelling genotypes
+
+Genotypes can be coded as AA, AB and BB (factor variables), instead. The p-value is not affected, but the estimated SNP effect is.
+
+```{r model2}
+phenotypes$snp <- as.factor(phenotypes$snp)
+fit <- lm(PH~snp, data = phenotypes)
+```
+
+```{r, echo=FALSE}
+g <- summary(fit)
+g
+```
+
+```{r, echo=FALSE}
+kable(anova(fit))
+```
+
+## Adding population structure
+
+```{r}
+fit <- lm(PH~population+snp, data = phenotypes)
+```
+
+```{r, echo=FALSE}
+g <- summary(fit)
+g
+```
+
+```{r, echo=FALSE}
+anova(fit)
+```
+
+## GWAS: binary traits
+
+For binary traits (e.g. case/control), the basic model is a simple logistic regression model of the following form:
+
+$$
+y_{ij}=\mu+SNP_j+e_{ij}
+$$
+
+where $y_{ij}$ is the phenotypic observation for sample *i* with SNP genotype *j*, $SNP_j$ is the effect of SNP genotype *j* (e.g. AA, AB, BB), and $e_{ij}$ are the residuals of the model.
+
+```{r data_sheep, echo=FALSE}
+setwd("~/Dropbox/cursos/berlin2018/data/")
+phenotypes <- read.table("pheno_genabel.dat", header = TRUE)
+genotypes <- read.table("sheep_snp.raw", header = TRUE)
+genotypes <- genotypes[,-c(1,3,4,5,6)]
+
+phenotypes <- merge(phenotypes, genotypes, by.x="id", by.y="IID")
+names(phenotypes) <- c("id","breed","horns","sex","snp")
+
+kable(head(phenotypes))
+```
+
+
+### Modelling number of copies of the minor allele
+
+First, we can model SNP genotypes as the number of copies of the minor allele: 0, 1, 2 (numeric variable)
+
+```{r}
+phenotypes <- phenotypes[phenotypes$horns!=0,]
+phenotypes$horns <- phenotypes$horns-1
+fit <- glm(horns~snp, data = phenotypes, family="binomial")
+```
+
+```{r, echo=FALSE}
+g <- summary(fit)
+g
+```
+
+#### ANOVA table
+
+```{r, echo=FALSE}
+kable(anova(fit))
+```
+

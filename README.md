@@ -29,3 +29,7 @@ plink --file rice --chr 2 --thin 0.1 --recode --out rice_reduced
 #example vcf file
 
 vcftools --gzvcf all.fb.vcf.gz --chr 1 --from-bp 10 --to-bp 1500 --recode --out vcf_subset
+
+##extract specific SNP
+
+~/Downloads/plink --file rice --snp S6_22313301 --recodeA --out rice_snp

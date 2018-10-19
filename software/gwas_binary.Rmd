@@ -1,5 +1,5 @@
 ---
-title: "GWAS - outline"
+title: "GWAS - binary trait"
 author: "Filippo Biscarini"
 date: "October 10, 2018"
 output: html_document
@@ -10,28 +10,53 @@ bibliography: gwas.bib
 knitr::opts_chunk$set(echo = TRUE)
 
 library("knitr")
+library("tidyr")
 library("dplyr")
 library("GenABEL")
 library("ggplot2")
 library("reshape2")
 ```
 
-## R Markdown
+## GWAS for a binary trait
 
-GWAS for binary traits.
+From Kijas et al. @kijas2016genome, data on the number of horns (two/four) in sheep have been obtained.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this @meuwissen2001prediction:
 
 ```{r data, echo=FALSE}
 setwd("~/Dropbox/cursos/berlin2018")
 load("data/df_genabel.RData")
-
-descriptives.marker(df)
 ```
+
+### Description of marker data
+
+GenABEL provides functions to look in a compact way to the main features of marker data:
+
+#### MAF
 
 ```{r, echo=FALSE}
-kable(descriptives.trait(df))
+D <- descriptives.marker(df)
+kable(D$`Minor allele frequency distribution`)
 ```
+
+#### HWE
+
+```{r, echo=FALSE}
+kable(D$`Cumulative distr. of number of SNPs out of HWE, at different alpha`)
+```
+
+#### call-rate per sample
+
+```{r, echo=FALSE}
+kable(D$`Distribution of proportion of successful genotypes (per person)`)
+```
+
+#### call-rate per SNP
+
+```{r, echo=FALSE}
+kable(D$`Distribution of proportion of successful genotypes (per SNP)`)
+```
+
+#### Distribution of markers per chromosome
 
 N. `r gtdata(df)@nsnps` from `r length(unique(gtdata(df)@chromosome))` chromosomes
 
@@ -41,7 +66,25 @@ names(dd) <- c("chrom","nSnps")
 kable(dd)
 ```
 
-## Including Plots
+### Description of phenotypes
+
+Two breeds, three phenotypic categories:
+
+- **1** = two horns
+- **2** = four horns
+- **0** = unknown
+
+```{r, echo=FALSE}
+kable(descriptives.trait(df))
+
+phdata(df) %>%
+  group_by(breed,phenotype) %>%
+  summarise(N=n()) %>%
+  spread(key=breed, value=N)
+  
+```
+
+## Barplot of phenotypic categories
 
 For the moment, our "phenotype" coincides with the breed:
 
@@ -55,9 +98,16 @@ print(p)
 
 ### Quality check
 
+GenABEL provides the function *check.marker()* to perform quality checks (MAF, call-rate, HWE, etc.) on marker data. Most of these have been already performed earlier using Plink. However, we can play around with some of the options and values to see what happens and how sensitive our GWAS model is to different qulity filters.
+
 ```{r, label='quality_check', echo=FALSE}
-qc1 <- check.marker(df, p.level=0)
+qc1 <- check.marker(df, p.level=0, maf=0.01)
 df1 <- df[,qc1$snpok]
+```
+
+We now remove samples with unknown phenotypic status (phenotype == 0). This way, our phenotype becomes binary (0/1)
+
+```{r}
 ## phenotypes: exclude unknown status
 df2 <- df1[phdata(df1)$phenotype!=0,]
 ```
@@ -80,6 +130,10 @@ df2 <- add.phdata(df2,ff, name = "pheno_recoded")
 # descriptives.scan(df.mm,top=100)
 # plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
 ```
+
+## Run the GWAS model
+
+We run our GWAS model correcting for population structure
 
 ```{r, label='eigenn_decomposition', echo=FALSE}
 df.mm  <- egscore(phdata(df2)$phenotype,data=df2,kin=K)

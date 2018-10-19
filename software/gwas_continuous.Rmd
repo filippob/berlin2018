@@ -25,7 +25,7 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r cars}
 setwd("~/Dropbox/cursos/berlin2018")
-load("data/df_genabel.RData")
+load("data/rice.tped.RData")
 
 descriptives.marker(df)
 ```
