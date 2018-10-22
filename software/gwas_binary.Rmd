@@ -133,10 +133,27 @@ df2 <- add.phdata(df2,ff, name = "pheno_recoded")
 
 ## Run the GWAS model
 
+GWAS without considering population structure (we have two sheep breeds):
+
+```{r, echo=FALSE}
+data2.qt <- qtscore(pheno_recoded, data = df2, trait="binomial")
+lambda(data2.qt)
+plot(data2.qt, df="Pc1df",col = c("red", "slateblue"),pch = 19, cex = .5, main="trait")
+descriptives.scan(data2.qt,top=10)
+```
+
 We run our GWAS model correcting for population structure
+
+```{r, label='polygenic', results='hide'}
+h2a <- polygenic(pheno_recoded,data=df2,kin=K,trait.type = "binomial")
+df.mm <- mmscore(h2a,df1)
+descriptives.scan(df.mm,top=10)
+plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
+```
 
 ```{r, label='eigenn_decomposition', echo=FALSE}
 df.mm  <- egscore(phdata(df2)$phenotype,data=df2,kin=K)
+lambda(df.mm)
 plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="trait")
 descriptives.scan(df.mm,top=10)
 ```

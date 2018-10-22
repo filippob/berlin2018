@@ -15,6 +15,7 @@ steps:
       - <plink> --sheep --file sheep --freqx --out ovis
       - <plink> --sheep --file sheep --missing --out ovis
       - <plink> --sheep --file sheep --hardy --out ovis
+      - <rstudio> hwe.R ## demonstration on HWE testing
 
   explore_phenotypes:
     desc: basic stats on phenotype data
