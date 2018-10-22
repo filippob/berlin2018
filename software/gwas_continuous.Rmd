@@ -15,6 +15,17 @@ library("knitr")
 library("GenABEL")
 library("ggplot2")
 library("reshape2")
+
+### own defined functions
+qqPlot <- function(res) {
+  
+  q <- ggplot(res, aes(-log10( ppoints(length(P) )), -log10(sort(P,decreasing=F))))
+  q <- q + geom_point() +  geom_abline(intercept=0,slope=1, col="red")
+  q <- q + xlab( expression(Expected~~-log [10] (p)) ) + ylab( expression(Observed~~-log [10] (p)) ) 
+  q <- q + ggtitle("")
+  
+  return(q)
+}
 ```
 
 ## GWAS for continuous traits
@@ -23,7 +34,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this @meuwissen2001prediction:
 
-```{r cars}
+```{r data, echo=FALSE}
 setwd("~/Dropbox/cursos/berlin2018")
 load("data/rice.tped.RData")
 
@@ -44,7 +55,7 @@ kable(dd)
 
 ## Including Plots
 
-For the moment, our "phenotype" coincides with the breed:
+Our continuous phenotype is plant height (PH) from the rice dataset (@biscarini2016genome): 
 
 ```{r pressure, echo=FALSE}
 pp <- phdata(df)
@@ -72,21 +83,52 @@ heatmap(K,col=rev(heat.colors(75)))
 data2.qt <- qtscore(phenotype, data = df1, trait="gaussian")
 lambda(data2.qt)
 plot(data2.qt, df="Pc1df",col = c("red", "slateblue"),pch = 19, cex = .5, main="trait")
-descriptives.scan(data2.qt,top=100)
+descriptives.scan(data2.qt,top=10)
 ```
 
-```{r, label='polygenic'}
+```{r}
+res <- results(data2.qt)
+res$SNP <- rownames(res)
+res <- res[,c("SNP","Chromosome","Position","Pc1df")]
+names(res) <- c("SNP","CHR","BP","P")
+res$CHR <- as.integer(as.character(res$CHR))
+row.names(res) <- NULL
+qqPlot(res)
+```
+
+```{r, label='polygenic', results='hide'}
 h2a <- polygenic(phenotype,data=df1,kin=K,trait.type = "gaussian")
 df.mm <- mmscore(h2a,df1)
-descriptives.scan(df.mm,top=100)
+descriptives.scan(df.mm,top=10)
 plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
+```
+
+```{r, echo=FALSE}
+lambda(df.mm)$estimate
+res <- results(df.mm)
+res$SNP <- rownames(res)
+res <- res[,c("SNP","Chromosome","Position","Pc1df")]
+names(res) <- c("SNP","CHR","BP","P")
+res$CHR <- as.integer(as.character(res$CHR))
+row.names(res) <- NULL
+qqPlot(res)
 ```
 
 ```{r, label='eigenn_decomposition', echo=FALSE}
 df.mm  <- egscore(phdata(df1)$phenotype,data=df1,kin=K)
 plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="trait")
-descriptives.scan(df.mm,top=100)
+descriptives.scan(df.mm,top=10)
 ```
 
+```{r, echo=FALSE}
+lambda(df.mm)$estimate
+res <- results(df.mm)
+res$SNP <- rownames(res)
+res <- res[,c("SNP","Chromosome","Position","Pc1df")]
+names(res) <- c("SNP","CHR","BP","P")
+res$CHR <- as.integer(as.character(res$CHR))
+row.names(res) <- NULL
+qqPlot(res)
+```
 
 ## References
