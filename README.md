@@ -1,7 +1,14 @@
 # berlin2018
 ## GWAS course in Berlin
 
-git repository: git clone https://github.com/filippob/berlin2018.git
+git repository: 
+git clone https://github.com/filippob/berlin2018.git
+
+cd berlin2018
+
+git status
+
+git pull
 
 ### Example data
 From Kijas et al. 2016
