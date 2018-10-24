@@ -1,5 +1,5 @@
 ---
-title: "GWAS - outline"
+title: "GWAS - continuous trait"
 author: "Filippo Biscarini"
 date: "October 10, 2018"
 output: html_document
@@ -30,9 +30,8 @@ qqPlot <- function(res) {
 
 ## GWAS for continuous traits
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this @meuwissen2001prediction:
+We now perform a complete GWAS analysis for a continuous trait.
+We use plant height (PH) from rice data published by @biscarini2016genome:
 
 ```{r data, echo=FALSE}
 setwd("~/Dropbox/cursos/berlin2018")
@@ -53,9 +52,9 @@ names(dd) <- c("chrom","nSnps")
 kable(dd)
 ```
 
-## Including Plots
+## Phenotypic distribution
 
-Our continuous phenotype is plant height (PH) from the rice dataset (@biscarini2016genome): 
+We use boxplots to inspect the distribution of our continuous phenotype:
 
 ```{r pressure, echo=FALSE}
 pp <- phdata(df)
@@ -65,6 +64,8 @@ print(p)
 ```
 
 ### Quality check
+
+The *R* package *GenABEL* also offers functions to perform quality checks and filters on the data (like we did in *Plink*):
 
 ```{r, label='quality_check', echo=FALSE}
 qc1 <- check.marker(df, p.level=0)
@@ -78,6 +79,8 @@ K <- ibs(df1,weight = "freq")
 K[upper.tri(K)] = t(K)[upper.tri(K)]
 heatmap(K,col=rev(heat.colors(75)))
 ```
+
+## GWAS model without accounting for population structure
 
 ```{r}
 data2.qt <- qtscore(phenotype, data = df1, trait="gaussian")
@@ -96,10 +99,12 @@ row.names(res) <- NULL
 qqPlot(res)
 ```
 
+## Use of the kinship matrix to model population structure
+
 ```{r, label='polygenic', results='hide'}
 h2a <- polygenic(phenotype,data=df1,kin=K,trait.type = "gaussian")
 df.mm <- mmscore(h2a,df1)
-descriptives.scan(df.mm,top=10)
+kable(descriptives.scan(df.mm,top=10))
 plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
 ```
 
@@ -113,6 +118,8 @@ res$CHR <- as.integer(as.character(res$CHR))
 row.names(res) <- NULL
 qqPlot(res)
 ```
+
+## Use of principal components to model population structure
 
 ```{r, label='eigenn_decomposition', echo=FALSE}
 df.mm  <- egscore(phdata(df1)$phenotype,data=df1,kin=K)
