@@ -35,7 +35,9 @@ print(paste("ped file is",ped_file))
 start.time <- Sys.time()
 
 #"READ IN THE DATA"
-M <- fread(ped_file, na.strings = "0")
+#M <- fread(ped_file, na.strings = "0")
+M <- fread(ped_file)
+M[M==0] <- NA
 
 n_samples <- nrow(M)
 n_snps <- ncol(M)-6
@@ -46,7 +48,7 @@ print(paste("N. of samples: ", n_samples, "; N. of SNP: ", n_snps))
 print("computing Hamming distances ...")
 D <- Hamming(M[,-c(1:6)])
 
-save(D, file = "../../data/hamming.RData")
+save(D, file = "hamming.RData")
 
 ## end time
 end.time <- Sys.time()

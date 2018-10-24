@@ -154,7 +154,9 @@ library("ggplot2")
 library("data.table")
 
 #"READ IN THE DATA"
-M <- fread("~/Dropbox/cursos/berlin2018/data/rice_reduced.ped", na.strings = "0")
+#M <- fread("/home/ubuntu/data/rice_reduced.ped", na.strings = "0")
+M <- fread("/home/ubuntu/data/rice_reduced.ped")
+M[M==0] <- NA
 M0 <- M[,.(V1,V2)]
 names(M0) <- c("GROUP","ID")
 
@@ -172,7 +174,7 @@ na_count/(n_snps*n_samples)
 
 #calculate distance matrix and nearest neighbours
 # D <- Hamming(M[,-c(1:6)])
-load("data/hamming.RData") ## load pre-calculated Hamming distances
+load("hamming.RData") ## load pre-calculated Hamming distances
 
 ## rescale distances
 rescaled_D <- rescale_D(D)
@@ -182,9 +184,12 @@ heatmap(D)
 
 ## MDS
 mdsD <- mdscale(D)
+pdf("mds.pdf")
 plot_mds(mdsD,M0,dimA = "dim1", dimB = "dim3")
+dev.off()
 
 ## IMPUTATION
 impM <- impute_genotypes(ped_file = as.data.frame(M), dist_matrix = D, k = 3)
+fwrite(impM,file="knn_imputed_data.csv")
 
 ## try out different k values
