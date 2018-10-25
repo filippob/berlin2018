@@ -13,7 +13,7 @@ D <- pheno_continuous %>%
   group_by(population) %>%
   summarise(N=n(), avgPH=mean(phenotype), stdPH=sd(phenotype), minPH=min(phenotype),
             maxPH=max(phenotype))
-
+D
 ## density plot
 p <- ggplot(pheno_continuous, aes(x=phenotype)) + geom_density()
 p <- p + xlab("plant height")

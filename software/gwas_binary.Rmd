@@ -120,7 +120,7 @@ K[upper.tri(K)] = t(K)[upper.tri(K)]
 heatmap(K,col=rev(heat.colors(75)))
 ```
 
-```{r, label='polygenic'}
+```{r, label='prepare_data'}
 ff <- phdata(df2)$phenotype
 ff[ff==2] <- 0
 df2 <- add.phdata(df2,ff, name = "pheno_recoded")
@@ -145,10 +145,10 @@ descriptives.scan(data2.qt,top=10)
 We run our GWAS model correcting for population structure
 
 ```{r, label='polygenic', results='hide'}
-h2a <- polygenic(pheno_recoded,data=df2,kin=K,trait.type = "binomial")
-df.mm <- mmscore(h2a,df1)
-descriptives.scan(df.mm,top=10)
-plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
+# h2a <- polygenic(pheno_recoded,data=df2,kin=K,trait.type = "binomial")
+# df.mm <- mmscore(h2a,df1)
+# descriptives.scan(df.mm,top=10)
+# plot(df.mm,col = c("red", "slateblue"),pch = 19, cex = .5, main="phenotype")
 ```
 
 ```{r, label='eigenn_decomposition', echo=FALSE}
