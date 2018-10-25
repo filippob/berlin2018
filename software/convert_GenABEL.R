@@ -10,7 +10,8 @@ print(paste("tped file is",tPed))
 print(paste("tfam file is",tFam))
 print(paste("phenotypes file is",phenotype_data))
 
-setwd("~/Dropbox/cursos/berlin2018/data")
+#setwd("~/Dropbox/cursos/berlin2018/data")
+setwd("/home/ubuntu/data")
 
 fname= basename(tPed)
 fname= sub("transposed\\_","",fname)
