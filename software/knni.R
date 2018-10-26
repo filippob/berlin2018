@@ -150,11 +150,11 @@ impute_genotypes <- function(ped_file,dist_matrix,k=3) {
 ##################################################
 ##################################################
 library("dplyr")
-library("ggplot2")
+library("ggplot2")#]]
 library("data.table")
 
 #"READ IN THE DATA"
-#M <- fread("/home/ubuntu/data/rice_reduced.ped", na.strings = "0")
+M <- fread("~/Dropbox/cursos/berlin2018/data/rice_reduced.ped")
 M <- fread("/home/ubuntu/data/rice_reduced.ped")
 M[M==0] <- NA
 M0 <- M[,.(V1,V2)]
@@ -185,7 +185,7 @@ heatmap(D)
 ## MDS
 mdsD <- mdscale(D)
 pdf("mds.pdf")
-plot_mds(mdsD,M0,dimA = "dim1", dimB = "dim3")
+plot_mds(mdsD,M0,dimA = "dim1", dimB = "dim2")
 dev.off()
 
 ## IMPUTATION

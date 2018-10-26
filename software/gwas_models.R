@@ -72,4 +72,3 @@ df <- length(coef(full_model)) - length(coef(reduced_model))
 teststat<--2*(as.numeric(l0)-as.numeric(l1))
 pchisq(teststat,df=1,lower.tail=FALSE)
 
-
